@@ -35,6 +35,7 @@ trait Settings {
       "Sonatype staging" at "http://oss.sonatype.org/content/repositories/staging",
       "Java.net Maven2 Repository" at "http://download.java.net/maven/2/",
       "Twitter Repository" at "http://maven.twttr.com",
+      Resolver.bintrayRepo("scalaz", "releases"),
       Resolver.bintrayRepo("websudos", "oss-releases")
     ),
     doc in Compile <<= target.map(_ / "none"),
