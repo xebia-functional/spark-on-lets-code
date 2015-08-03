@@ -1,3 +1,5 @@
+[![Build Status](https://magnum.travis-ci.com/47deg/spark-on-lets-code.svg?token=x4DpWRL5qXeuK6kxqVSP&branch=master)]
+
 # SparkOn
 
 This small spark project provides the sample code which we've talked about in [this article](http://wwww.47deg.com), in the 47 Degrees blog.
