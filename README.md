@@ -1,4 +1,4 @@
-[![Build Status](https://magnum.travis-ci.com/47deg/spark-on-lets-code.svg?token=x4DpWRL5qXeuK6kxqVSP&branch=master)]
+[![Build Status](https://magnum.travis-ci.com/47deg/spark-on-lets-code.svg?token=x4DpWRL5qXeuK6kxqVSP&branch=master)](https://magnum.travis-ci.com/47deg/spark-on-lets-code)
 
 # SparkOn
 
