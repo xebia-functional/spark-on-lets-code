@@ -2,7 +2,7 @@
 
 # SparkOn
 
-This small spark project provides the sample code which we've talked about in [this article](http://wwww.47deg.com), in the 47 Degrees blog.
+This small spark project provides the sample code which we've talked about in [this article](http://www.47deg.com/blog/spark-on-lets-code-part-1), in the 47 Degrees blog.
 
 ## App Requirements
 
