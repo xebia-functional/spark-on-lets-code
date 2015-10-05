@@ -44,7 +44,7 @@ trait Settings {
 
   lazy val apiSettings = projectSettings ++ assemblySettings ++ Seq(
     scalaVersion in ThisBuild := V.scala,
-    assemblyJarName in assembly := "aurorabreeze-1.0.0.jar",
+    assemblyJarName in assembly := "sparkOn-1.0.0.jar",
     assembleArtifact in assemblyPackageScala := true,
     Keys.test in assembly := {},
     assemblyMergeStrategy in assembly := {

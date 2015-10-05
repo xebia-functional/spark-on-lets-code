@@ -8,12 +8,12 @@ trait SettingsDocker {
 
   lazy val dockerSettings = Seq(
     docker <<= docker dependsOn assembly,
-    imageNames in docker := Seq(ImageName("47deg/aurora")),
+    imageNames in docker := Seq(ImageName("47deg/sparkOn")),
     dockerfile in docker := {
-      val workingDir = s"/opt/aurora"
+      val workingDir = s"/opt/sparkOn"
       val artifact = (assemblyOutputPath in assembly).value
 
-      val artifactTargetPath = s"/opt/aurora/${artifact.name}"
+      val artifactTargetPath = s"/opt/sparkOn/${artifact.name}"
       val sparkPath = "/usr/local/spark/assembly/target/scala-2.11/spark-assembly-1.5.1-hadoop2.4.0.jar"
 
       val mainclass = mainClass.in(Compile, packageBin).value.getOrElse(sys.error("Expected exactly one main class"))
