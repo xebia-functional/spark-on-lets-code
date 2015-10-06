@@ -8,7 +8,7 @@ trait SettingsDocker {
 
   lazy val dockerSettings = Seq(
     docker <<= docker dependsOn assembly,
-    imageNames in docker := Seq(ImageName("47deg/sparkOn")),
+    imageNames in docker := Seq(ImageName("47deg/sparkon")),
     dockerfile in docker := {
       val workingDir = s"/opt/sparkOn"
       val artifact = (assemblyOutputPath in assembly).value
