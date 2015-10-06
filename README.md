@@ -1,6 +1,7 @@
 [![Build Status](https://travis-ci.org/47deg/spark-on-lets-code.svg?branch=master)](https://travis-ci.org/47deg/spark-on-lets-code)
+[![Codacy Badge](https://api.codacy.com/project/badge/a7ac855c47cc46ea80b6c69907415f5c)](https://www.codacy.com/app/47deg/spark-on-lets-code)
 
-# SparkOn
+# Spark On
 
 This small spark project provides the sample code which we've talked about in `Spark On` blog post series at [47D Blog](http://www.47deg.com/blog).
 
