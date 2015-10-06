@@ -1,3 +1,9 @@
 language: scala
 scala:
-  - 2.11.6
+  - 2.11.7
+script:
+  - sbt ++$TRAVIS_SCALA_VERSION coverage test
+after_script:
+  - sbt ++$TRAVIS_SCALA_VERSION coverageReport
+  - sbt ++$TRAVIS_SCALA_VERSION coverageAggregate
+  - sbt ++$TRAVIS_SCALA_VERSION codacyCoverage
