@@ -1,6 +1,6 @@
 package com.fortysevendeg.sparkon.api.http
 
-import akka.actor.{ActorSystem,ActorRef}
+import akka.actor.ActorSystem
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.model.ws.{Message, TextMessage}
@@ -9,13 +9,11 @@ import akka.stream.Materializer
 import akka.stream.scaladsl.{Flow, Keep, Sink, Source}
 import com.datastax.spark.connector.cql.CassandraConnector
 import com.fortysevendeg.sparkon.common.config.ConfigRegistry._
-import com.fortysevendeg.sparkon.services.sparksql.StreamingSQLContext
 import com.fortysevendeg.sparkon.services.twitter._
 import com.softwaremill.react.kafka.KafkaMessages._
 import com.softwaremill.react.kafka.{ConsumerProperties, ReactiveKafka}
 import kafka.serializer.StringDecoder
 import org.apache.spark.SparkContext
-import org.apache.spark.sql.cassandra.CassandraSQLContext
 import org.apache.spark.streaming.{Seconds, StreamingContext, StreamingContextState}
 import org.reactivestreams.Publisher
 import org.slf4j.LoggerFactory
@@ -37,8 +35,6 @@ trait ApiHttpService extends Protocols {
   implicit val ssc: StreamingContext
   implicit val cassandraConnector: CassandraConnector
   implicit val twitterStreamingServices: TwitterStreamingServices
-  implicit val streamingSQLContext: StreamingSQLContext
-  implicit val cassandraSQLContext: CassandraSQLContext
 
   val routes = {
     logRequestResult("web-socket-services") {
