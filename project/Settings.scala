@@ -1,15 +1,14 @@
-import sbt.Keys._
 import sbt._
+import sbt.Keys._
 import sbtassembly.AssemblyPlugin.autoImport._
-import spray.revolver.RevolverPlugin.Revolver.{settings => revolverSettings}
+import spray.revolver.RevolverPlugin.Revolver
 import sbtassembly.AssemblyPlugin._
 import sbtassembly.MergeStrategy._
 
 trait Settings {
-  this: Build =>
+  this: Build with SettingsDocker =>
 
-  lazy val projectSettings: Seq[Def.Setting[_]] = assemblySettings ++ revolverSettings ++ 
-  Seq(
+  lazy val projectSettings: Seq[Def.Setting[_]] = Seq(
     scalaVersion := V.scala,
     scalaVersion in ThisBuild := V.scala,
     organization := "com.fortysevendeg",
@@ -17,12 +16,12 @@ trait Settings {
     organizationHomepage := Some(new URL("http://47deg.com")),
     version := V.buildVersion,
     conflictWarning := ConflictWarning.disable,
-    scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature"),
+    scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature", "-Ywarn-unused-import"),
     javaOptions in Test ++= Seq("-XX:MaxPermSize=128m", "-Xms512m", "-Xmx512m"),
-    sbt.Keys.fork in Test := true,
+    ivyScala := ivyScala.value map { _.copy(overrideScalaVersion = true) },
+    sbt.Keys.fork := true,
     publishMavenStyle := true,
     publishArtifact in(Test, packageSrc) := true,
-    publishArtifact in(Test, packageBin) := false,
     logLevel := Level.Info,
     resolvers ++= Seq(
       Resolver.mavenLocal,
@@ -35,12 +34,17 @@ trait Settings {
       "Sonatype staging" at "http://oss.sonatype.org/content/repositories/staging",
       "Java.net Maven2 Repository" at "http://download.java.net/maven/2/",
       "Twitter Repository" at "http://maven.twttr.com",
+      "mvnrepository" at "http://mvnrepository.com/artifact/",
       Resolver.bintrayRepo("scalaz", "releases"),
       Resolver.bintrayRepo("websudos", "oss-releases")
     ),
     doc in Compile <<= target.map(_ / "none"),
-    unmanagedResourceDirectories in Compile <+= baseDirectory(_ / "src/main/scala"),
-    assemblyJarName in assembly := "sparkon-1.0.0.jar",
+    unmanagedResourceDirectories in Compile <+= baseDirectory(_ / "src/main/scala")
+  )
+
+  lazy val apiSettings = projectSettings ++ assemblySettings ++ Seq(
+    scalaVersion in ThisBuild := V.scala,
+    assemblyJarName in assembly := "sparkOn-1.0.0.jar",
     assembleArtifact in assemblyPackageScala := true,
     Keys.test in assembly := {},
     assemblyMergeStrategy in assembly := {
@@ -54,6 +58,7 @@ trait Settings {
           case true => first
           case _ => mergeStrategy
         }
-    }
-  )
+    },
+    publishArtifact in(Test, packageBin) := false
+  ) ++ Revolver.settings ++ dockerSettings
 }

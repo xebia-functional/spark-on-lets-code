@@ -1,0 +1,115 @@
+zookeeper:
+  image: 47deg/zookeeper
+  ports:
+    - "2181:2181"
+kafka_1:
+  image: 47deg/kafka
+  ports:
+    - "9092"
+  links:
+    - zookeeper:zk
+  environment:
+    KAFKA_ADVERTISED_HOST_NAME: 192.168.99.100
+  volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
+kafka_2:
+  image: 47deg/kafka
+  ports:
+    - "9092"
+  links:
+    - zookeeper:zk
+  environment:
+    KAFKA_ADVERTISED_HOST_NAME: 192.168.99.100
+  volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
+kafka_3:
+  image: 47deg/kafka
+  ports:
+    - "9092"
+  links:
+    - zookeeper:zk
+  environment:
+    KAFKA_ADVERTISED_HOST_NAME: 192.168.99.100
+  volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
+opscenter:
+  image: 47deg/opscenter
+  ports:
+  - "8888:8888"
+  container_name: opscenter
+cassandra_seed:
+  image: 47deg/cassandra
+  ports:
+  - "9042:9042"
+  links:
+    - opscenter
+  container_name: cassandra_seed
+  environment:
+    - OPS_IP=opscenter
+cassandra_slave:
+  image: 47deg/cassandra
+  links:
+    - opscenter
+    - cassandra_seed
+  environment:
+    - OPS_IP=opscenter
+    - SEED=cassandra_seed
+opscenter_checkpoint:
+  image: 47deg/java8
+  working_dir: /src
+  volumes:
+  - .:/src
+  command: sh initOpscenter.sh
+  links:
+    - opscenter
+    - cassandra_seed
+    - cassandra_slave
+  environment:
+    - OPS_IP=opscenter
+    - SEED=cassandra_seed
+    - CASS_SLAVE=cassandra_slave
+    - WAIT_SLEEP=10
+    - WAIT_LOOPS=10
+spark_master:
+  image: 47deg/spark:1.5.1
+  ports:
+  - "7077:7077"
+  - "8080:8080"
+  container_name: spark_master
+  tty: true
+  command: /start-master.sh
+spark_worker:
+  image: 47deg/spark:1.5.1
+  links:
+    - spark_master
+  command: /start-worker.sh
+namenode:
+  image: 47deg/yarn-cluster
+  working_dir: /usr/local/hadoop
+  ports:
+  - "8088:8088"
+  - "50070:50070"
+  - "50075:50075"
+  container_name: namenode
+  command: bash -c "/etc/bootstrap.sh -d -namenode && sleep 30 && /usr/local/hadoop/bin/hadoop fs -mkdir /checkpoint"
+datanode:
+  image: 47deg/yarn-cluster
+  working_dir: /usr/local/hadoop
+  links:
+    - namenode
+  command: /etc/bootstrap.sh -d -datanode
+sparkon:
+  image: 47deg/sparkon
+  ports:
+  - "9090:9090"
+  container_name: sparkon
+  links:
+    - spark_master
+    - cassandra_seed
+    - cassandra_slave
+    - namenode
+    - zookeeper
+    - kafka_1
+    - kafka_2
+    - kafka_3
+  env_file: sparkOn.env
