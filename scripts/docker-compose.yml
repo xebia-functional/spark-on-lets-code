@@ -91,7 +91,7 @@ namenode:
   - "50070:50070"
   - "50075:50075"
   container_name: namenode
-  command: bash -c "/etc/bootstrap.sh -d -namenode && sleep 30 && /usr/local/hadoop/bin/hadoop fs -mkdir /checkpoint"
+  command: bash -c "/etc/bootstrap.sh -d -namenode"
 datanode:
   image: 47deg/yarn-cluster
   working_dir: /usr/local/hadoop
