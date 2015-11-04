@@ -7,13 +7,35 @@ This small spark project provides the sample code which we've talked about in `S
 
 ## App Requirements
 
-* Cassandra
-
-If you have not set up `Cassandra` locally, you might use docker and the `spotify/cassandra`, for instance, running a container in this way:
-
-    docker run -d -p 9042:9042 -p 9160:9160 spotify/cassandra
-    
 * Twitter Credentials to connect to the Twitter API. Read more about it [here](https://dev.twitter.com/overview/documentation).
+
+## Deploy Docker Infrastructure
+
+## Start Cluster
+
+Deploy in a docker cluster
+
+    sh scripts/deploy.sh
+
+By default, the infrastructure deployed will be:
+
+- 2 Cassandra Docker Containers
+- 1 Docker Container [DataStax Opscenter](http://www.datastax.com/products/datastax-enterprise-visual-admin)
+- 1 node 
+
+## Scaling Out Services
+
+For instance, to increase the Spark Workers available:
+
+    docker-compose scale spark_worker=5
+
+## Stop Cluster
+
+    docker-compose stop
+
+## Remove Cluster
+
+    docker-compose rm
 
 ## Running with SBT or Activator
 
@@ -22,8 +44,8 @@ If you have not set up `Cassandra` locally, you might use docker and the `spotif
     -Dtwitter.credentials.accessToken="{ACCESS_TOKEN}" \
     -Dtwitter.credentials.accessTokenSecret="{ACCESS_TOKEN_SECRET}" \
     "run"
-    
-Or    
+
+Or
 
     sbt -Dtwitter.credentials.consumerKey="{CONSUMER_KEY}" \
     -Dtwitter.credentials.consumerSecret="{CONSUMER_SECRET}" \
@@ -31,26 +53,26 @@ Or
     -Dtwitter.credentials.accessTokenSecret="{ACCESS_TOKEN_SECRET}" \
     "run"
 
-## Running fat JAR	
-	
+## Running fat JAR
+
 First, we need to generate the fat jar with the [sbt assembly plugin](https://github.com/sbt/sbt-assembly):
-	
+
 	sbt assembly
-		
+
 and then:
-	
+
     java -Dtwitter.credentials.consumerKey="{CONSUMER_KEY}" \
     -Dtwitter.credentials.consumerSecret="{CONSUMER_SECRET}" \
     -Dtwitter.credentials.accessToken="{ACCESS_TOKEN}" \
     -Dtwitter.credentials.accessTokenSecret="{ACCESS_TOKEN_SECRET}" \
     -cp /path/to/spark-on-lets-code/target/scala-2.11/sparkon-1.0.0.jar \
     com.fortysevendeg.sparkon.api.http.Boot
-    
+
 On the other hand, if you have set up the environment variables *CONSUMER_KEY*, *CONSUMER_SECRET*, *ACCESS_TOKEN* and *ACCESS_TOKEN_SECRET*:
 
     java -cp /path/to/spark-on-lets-code/target/scala-2.11/sparkon-1.0.0.jar \
     com.fortysevendeg.sparkon.api.http.Boot
-    
+
 # HTTP Application API - FORMAT: 1A
 
 ## Spark Streaming Status Endpoint [/twitter-streaming]
@@ -88,6 +110,10 @@ This action allows you to start the Spark Streaming Context.
         }
 
 + Response 400
+
+## WS Filtered Twitter Word Tracks [WS /trending-topics]
+
+Open a websocket in order to show each new filtered track word is found.
 
 #License
 
