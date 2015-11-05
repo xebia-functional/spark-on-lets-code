@@ -102,6 +102,7 @@ sparkon:
   image: 47deg/sparkon
   ports:
   - "9090:9090"
+  - "4040:4040"
   container_name: sparkon
   links:
     - spark_master

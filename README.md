@@ -3,7 +3,7 @@
 
 # Spark On
 
-This small spark project provides the sample code which we've talked about in `Spark On` blog post series at [47D Blog](http://www.47deg.com/blog).
+This small spark project provides the sample code which we've talked about in `Spark On` blog post series at [47D Blog](http://www.47deg.com/blog/tags/sparkonletscode).
 
 ## App Requirements
 
