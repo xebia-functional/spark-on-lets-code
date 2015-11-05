@@ -69,7 +69,9 @@ trait ApiHttpService extends Protocols {
                       logger.info(s"Streaming Filters [${filters.mkString(",\n")}]")
 
                       implicit val dsStream = twitterStreamingServices.createTwitterStream()
-                      twitterStreamingServices.ingestTweets(topics = filters, windowSize = Seconds(windowSizeSeconds))
+                      twitterStreamingServices.ingestTweets(topics = filters,
+                        windowSize = Seconds(windowSizeSeconds),
+                        slideDuration = Seconds(slideDuration))
                       Info(message = "Started")
                     case StreamingContextState.ACTIVE =>
                       BadRequest -> "The streaming has already started"

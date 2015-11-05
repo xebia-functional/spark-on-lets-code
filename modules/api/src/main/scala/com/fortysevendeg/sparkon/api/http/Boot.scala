@@ -25,6 +25,7 @@ object Boot extends App with ApiHttpService {
     .set("spark.executorEnv.kafkaBootstrapServers", bootstrapServers)
     .set("spark.executorEnv.kafkaProducerKeySerializer", kafkaProducerKeySerializer)
     .set("spark.executorEnv.kafkaProducerValueSerializer", kafkaProducerValueSerializer)
+    .set("spark.streaming.backpressure.enabled", "true")
 
   override implicit val system = ActorSystem("ReactiveSparkOn")
   override implicit val executor = system.dispatcher

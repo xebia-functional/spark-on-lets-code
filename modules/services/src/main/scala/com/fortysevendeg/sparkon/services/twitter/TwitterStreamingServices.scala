@@ -50,13 +50,14 @@ trait TwitterStreamingServices extends Serializable {
   }
 
   def ingestTweets(topics: Set[String],
-      windowSize: Duration)
+      windowSize: Duration,
+      slideDuration: Duration)
       (implicit ssc: StreamingContext,
           dsStream: DStream[Status]) = {
 
     val tweetsByDay: DStream[TweetsByDay] = getTweetsByDay(dsStream)
 
-    val tweetsByTrack: DStream[TweetsByTrack] = getTweetsByTrack(dsStream, topics, windowSize)
+    val tweetsByTrack: DStream[TweetsByTrack] = getTweetsByTrack(dsStream, topics, windowSize, slideDuration)
 
     // tweetsByTrack -> kafka
     writeToKafka(tweetsByTrack)
@@ -121,11 +122,14 @@ trait TwitterStreamingServices extends Serializable {
 
   def getTweetsByDay(dsStream: DStream[Status]): DStream[TweetsByDay] = dsStream.map(toTweetsByDay)
 
-  def getTweetsByTrack(dsStream: DStream[Status], topics: Set[String], windowSize: Duration): DStream[TweetsByTrack] =
+  def getTweetsByTrack(dsStream: DStream[Status],
+      topics: Set[String],
+      windowSize: Duration,
+      slideDuration: Duration): DStream[TweetsByTrack] =
     dsStream
         .flatMap(_.getText.toLowerCase.split( """\s+"""))
         .filter(topics.contains)
-        .countByValueAndWindow(windowSize, windowSize)
+        .countByValueAndWindow(windowSize, slideDuration)
         .transform {
           (rdd, time) =>
             val dateParts = formatTime(time, dateFormat)
