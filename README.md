@@ -3,59 +3,97 @@
 
 # Spark On
 
-This small spark project provides the sample code which we've talked about in `Spark On` blog post series at [47D Blog](http://www.47deg.com/blog/tags/sparkonletscode).
+This small Spark project provides the sample code which we've talked about in the `Spark On` blog post series at [47D Blog](http://www.47deg.com/blog/tags/sparkonletscode).
 
 ## App Requirements
 
-* Cassandra
-
-If you have not set up `Cassandra` locally, you might use docker and the `spotify/cassandra`, for instance, running a container in this way:
-
-    docker run -d -p 9042:9042 -p 9160:9160 spotify/cassandra
-    
 * Twitter Credentials to connect to the Twitter API. Read more about it [here](https://dev.twitter.com/overview/documentation).
+* In this README.md file you will see the IP address `192.168.99.100`. If you are using [docker-machine](https://docs.docker.com/machine/), `docker-machine ip <machine-name>` command should return the specific host’s IP address. You must replace `192.168.99.100` for the IP address in your case.
+* The whole infrastructure has been tested on an Apple Macbook Pro (2,7 GHz Intel Core i5, 16 GB 1867 MHz DDR3).
 
-## Running with SBT or Activator
+To start off, we need to define a few environment variables in this [config file](https://github.com/47deg/spark-on-lets-code/blob/master/scripts/sparkOn.env#L5).
 
-    ./activator -Dtwitter.credentials.consumerKey="{CONSUMER_KEY}" \
-    -Dtwitter.credentials.consumerSecret="{CONSUMER_SECRET}" \
-    -Dtwitter.credentials.accessToken="{ACCESS_TOKEN}" \
-    -Dtwitter.credentials.accessTokenSecret="{ACCESS_TOKEN_SECRET}" \
-    "run"
-    
-Or    
+## Deploy Docker Infrastructure
 
-    sbt -Dtwitter.credentials.consumerKey="{CONSUMER_KEY}" \
-    -Dtwitter.credentials.consumerSecret="{CONSUMER_SECRET}" \
-    -Dtwitter.credentials.accessToken="{ACCESS_TOKEN}" \
-    -Dtwitter.credentials.accessTokenSecret="{ACCESS_TOKEN_SECRET}" \
-    "run"
+### Start Cluster
 
-## Running fat JAR	
-	
-First, we need to generate the fat jar with the [sbt assembly plugin](https://github.com/sbt/sbt-assembly):
-	
-	sbt assembly
-		
-and then:
-	
-    java -Dtwitter.credentials.consumerKey="{CONSUMER_KEY}" \
-    -Dtwitter.credentials.consumerSecret="{CONSUMER_SECRET}" \
-    -Dtwitter.credentials.accessToken="{ACCESS_TOKEN}" \
-    -Dtwitter.credentials.accessTokenSecret="{ACCESS_TOKEN_SECRET}" \
-    -cp /path/to/spark-on-lets-code/target/scala-2.11/sparkon-1.0.0.jar \
-    com.fortysevendeg.sparkon.api.http.Boot
-    
-On the other hand, if you have set up the environment variables *CONSUMER_KEY*, *CONSUMER_SECRET*, *ACCESS_TOKEN* and *ACCESS_TOKEN_SECRET*:
+We've defined a bash script to deploy all of the cluster dependencies, including the Spark Streaming Application, which means, we can run it in this way:
 
-    java -cp /path/to/spark-on-lets-code/target/scala-2.11/sparkon-1.0.0.jar \
-    com.fortysevendeg.sparkon.api.http.Boot
-    
+    scripts/deploy.sh
+
+By default, the infrastructure deployed will be:
+
+- Spark Cluster:
+    - 1 Spark Master
+    - 2 Spark Worker nodes
+- Cassandra Cluster:
+    - 2 Cassandra Docker Containers
+    - 1 Docker Container with [DataStax Opscenter](http://www.datastax.com/products/datastax-enterprise-visual-admin)
+- Kafka Cluster:
+    - 1 Docker node Zookeper
+    - 3 Docker containers running as Kafka brokers
+- Hadoop HDFS Cluster:
+    - 1 Docker container running as namenode
+    - 1 Docker container running as datanode
+- 1 Docker container for our Streaming App
+
+### Scaling Out Services
+
+For instance, to increase the Spark Workers available:
+
+    docker-compose scale spark_worker=5
+
+### Start the Streaming
+
+If everything is functioning correctly, we can start the Twitter Streaming as follows:
+
+    curl -X "POST" "http://192.168.99.100:9090/twitter-streaming" \
+      -H "Content-Type: application/json" \
+      -d $'{
+      "recreateDatabaseSchema": true,
+      "filters": [
+        "lambda",
+        "scala",
+        "akka",
+        "spray",
+        "play2",
+        "playframework",
+        "spark",
+        "java",
+        "python",
+        "cassandra",
+        "bigdata",
+        "47 Degrees",
+        "47Degrees",
+        "47Deg",
+        "programming",
+        "chicharrones",
+        "cat",
+        "dog"
+      ]
+    }'
+
+### Connect to the Web Socket
+
+For instance, you could use [Simple WebSocket Client](https://goo.gl/8Jw6K) for Google Chrome, opening the connection in this URL ws://192.168.99.100:9090/trending-topics .
+
+### Stop Cluster
+
+We can stop the streaming gracefully, before stopping the cluster:
+
+    curl -X "DELETE" "http://192.168.99.100:9090/twitter-streaming"
+
+And then, from the shell:
+
+    cd scripts
+    docker-compose stop
+    docker-compose rm
+
 # HTTP Application API - FORMAT: 1A
 
 ## Spark Streaming Status Endpoint [/twitter-streaming]
 
-Starts, stops and fetch the Spark Streaming Context status in the application. Note: once you have stopped the context you can not start again.
+Start, stop and fetch the Spark Streaming Context status in the application. Note: once you have stopped the context you can not start again.
 
 ### Get Streaming Status [GET]
 
@@ -88,6 +126,10 @@ This action allows you to start the Spark Streaming Context.
         }
 
 + Response 400
+
+## WS Filtered Twitter Word Tracks [WS /trending-topics]
+
+Open a websocket in order to show each new filtered track word is found.
 
 #License
 
