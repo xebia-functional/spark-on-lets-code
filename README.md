@@ -3,13 +3,13 @@
 
 # Spark On
 
-This small spark project provides the sample code which we've talked about in `Spark On` blog post series at [47D Blog](http://www.47deg.com/blog/tags/sparkonletscode).
+This small Spark project provides the sample code which we've talked about in the `Spark On` blog post series at [47D Blog](http://www.47deg.com/blog/tags/sparkonletscode).
 
 ## App Requirements
 
 * Twitter Credentials to connect to the Twitter API. Read more about it [here](https://dev.twitter.com/overview/documentation).
-* In this README.md file you will see the IP address `192.168.99.100`. If you are using [docker-machine](https://docs.docker.com/machine/), `docker-machine ip <machine-name>` command should returns the specific host’s IP address. You must replace `192.168.99.100` for the IP address in your case.
-* The whole infrastructure has been tested on a Apple Macbook Pro (2,7 GHz Intel Core i5, 16 GB 1867 MHz DDR3).
+* In this README.md file you will see the IP address `192.168.99.100`. If you are using [docker-machine](https://docs.docker.com/machine/), `docker-machine ip <machine-name>` command should return the specific host’s IP address. You must replace `192.168.99.100` for the IP address in your case.
+* The whole infrastructure has been tested on an Apple Macbook Pro (2,7 GHz Intel Core i5, 16 GB 1867 MHz DDR3).
 
 To start off, we need to define a few environment variables in this [config file](https://github.com/47deg/spark-on-lets-code/blob/master/scripts/sparkOn.env#L5).
 
@@ -17,7 +17,7 @@ To start off, we need to define a few environment variables in this [config file
 
 ### Start Cluster
 
-We've defined a bash script to deploy the whole cluster dependencies, including the Spark Streaming Application, which means, we can run it in this way:
+We've defined a bash script to deploy all of the cluster dependencies, including the Spark Streaming Application, which means, we can run it in this way:
 
     scripts/deploy.sh
 
@@ -30,11 +30,11 @@ By default, the infrastructure deployed will be:
     - 2 Cassandra Docker Containers
     - 1 Docker Container with [DataStax Opscenter](http://www.datastax.com/products/datastax-enterprise-visual-admin)
 - Kafka Cluster:
-    - 1 docker node zookeper
-    - 3 docker containers running as kafka brokers
+    - 1 Docker node Zookeper
+    - 3 Docker containers running as Kafka brokers
 - Hadoop HDFS Cluster:
-    - 1 docker container running as namenode
-    - 1 docker container running as datanode
+    - 1 Docker container running as namenode
+    - 1 Docker container running as datanode
 - 1 Docker container for our Streaming App
 
 ### Scaling Out Services
@@ -93,7 +93,7 @@ And then, from the shell:
 
 ## Spark Streaming Status Endpoint [/twitter-streaming]
 
-Starts, stops and fetch the Spark Streaming Context status in the application. Note: once you have stopped the context you can not start again.
+Start, stop and fetch the Spark Streaming Context status in the application. Note: once you have stopped the context you can not start again.
 
 ### Get Streaming Status [GET]
 
