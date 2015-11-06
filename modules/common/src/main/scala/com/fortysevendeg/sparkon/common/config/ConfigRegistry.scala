@@ -20,6 +20,7 @@ object ConfigRegistry {
 
   lazy val sparkOnFilters = sparkOnConfig.getStringList("filters").asScala.toSet
   lazy val windowSizeSeconds = sparkOnConfig.getLong("windowSizeSeconds")
+  lazy val slideDuration = sparkOnConfig.getLong("slideDuration")
   lazy val cassandraCQLPath = sparkOnConfig.getString("cassandraCQLPath")
   lazy val sparkOnJars = sparkOnConfig.getStringList("spark.jars").asScala.toSeq
   lazy val dateFormat = sparkOnConfig.getString("dateFormat")
