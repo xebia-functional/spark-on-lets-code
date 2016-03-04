@@ -18,7 +18,7 @@ trait CassandraServices extends Serializable {
     val cqlStatements = Try {
       val url = getClass.getResource(cassandraCQLPath)
       val cql = Source.fromURL(url).mkString
-      cql.split("\n\n").toSeq
+      cql.split("\n\n").toList
     }
 
     cqlStatements match {

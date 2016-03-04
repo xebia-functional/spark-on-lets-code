@@ -31,7 +31,7 @@ trait TwitterStreamingServices extends Serializable {
     cassandraServices.createSchema(sparkCassandraKeyspace, cassandraCQLPath)
 
   def createTwitterStream(
-      filters: Seq[String] = Seq.empty,
+      filters: List[String] = Nil,
       storageLevel: StorageLevel = StorageLevel.MEMORY_AND_DISK_SER)(implicit ssc: StreamingContext) = {
     val authorization = new OAuthAuthorization(new ConfigurationBuilder()
         .setOAuthConsumerKey(twitterAuth.consumerKey)

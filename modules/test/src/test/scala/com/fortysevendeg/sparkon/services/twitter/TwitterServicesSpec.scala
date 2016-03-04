@@ -19,7 +19,7 @@ class TwitterServicesSpec
     "build a twitter4j client to fetch the current trending topics " in {
       val twitterServices = new TwitterServicesStub {}
 
-      val filters = Seq("scala", "akka")
+      val filters = List("scala", "akka")
 
       val trends = mock[TrendsResources]
       val placeTrends = mock[Trends]
@@ -45,7 +45,7 @@ class TwitterServicesSpec
     "return a new custom exception when twitter4j.TwitterException is thrown" in {
       val twitterServices = new TwitterServicesStub {}
 
-      val filters = Seq("scala", "akka")
+      val filters = List("scala", "akka")
 
       twitterServices.twitterClient.trends() throws new RuntimeException("something wrong")
 

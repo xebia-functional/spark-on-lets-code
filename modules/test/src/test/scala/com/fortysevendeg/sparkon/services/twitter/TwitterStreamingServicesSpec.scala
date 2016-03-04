@@ -69,14 +69,14 @@ class TwitterStreamingServicesSpec
     "create a new twitter streaming for an empty filters set and using " +
       "the storageLevel default value" in new CreateTwitterStreamScope {
 
-        twitterStreamingServices.createTwitterStream(filters = Seq.empty)
+        twitterStreamingServices.createTwitterStream(filters = Nil)
 
         "All combinations looks good" must endWith("good")
       }
 
     "create a new twitter streaming for some filters and using " +
       "the storageLevel default value" in new CreateTwitterStreamScope {
-        val filters = Seq("scala", "akka")
+        val filters = List("scala", "akka")
 
         twitterStreamingServices.createTwitterStream(filters = filters)
 
@@ -85,7 +85,7 @@ class TwitterStreamingServicesSpec
 
     "create a new twitter streaming for some filters and a " +
       "specified storage level" in new CreateTwitterStreamScope {
-        val filters = Seq("scala", "akka")
+        val filters = List("scala", "akka")
 
         twitterStreamingServices.createTwitterStream(filters = filters,
           storageLevel = StorageLevel.MEMORY_AND_DISK_SER_2)
