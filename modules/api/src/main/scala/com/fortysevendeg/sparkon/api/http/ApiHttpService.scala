@@ -22,7 +22,7 @@ import scala.concurrent.ExecutionContextExecutor
 
 case class Info(message: String)
 
-case class ApiStreamingRequest(recreateDatabaseSchema: Boolean, filters: Seq[String])
+case class ApiStreamingRequest(recreateDatabaseSchema: Boolean, filters: List[String])
 
 trait ApiHttpService extends Protocols {
 

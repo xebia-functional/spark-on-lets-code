@@ -9,7 +9,7 @@ import scala.reflect.ClassTag
 
 class TwitterReceiverActorStream[T: ClassTag](
   twitterAuth: Authorization,
-  filters: Seq[String]
+  filters: List[String]
 ) extends Actor with ActorHelper {
 
   val twitterStream = new TwitterStreamFactory().getInstance(twitterAuth)

@@ -17,7 +17,7 @@ class TwitterReceiverActorStreamSpec
   val twitterStreamMock = mock[TwitterStream]
 
   class TwitterReceiverActorStreamStub[T: ClassTag](
-    twitterAuth: Authorization, filters: Seq[String])
+    twitterAuth: Authorization, filters: List[String])
     extends TwitterReceiverActorStream[T](twitterAuth, filters) {
      override val twitterStream = twitterStreamMock
      override val listener = mock[StatusListener]
@@ -29,14 +29,14 @@ class TwitterReceiverActorStreamSpec
     "process all the actor streaming messages" in {
 
       val twitterAuth = mock[Authorization]
-      val filters = Seq("scala", "play", "akka", "spark", "47")
+      val filters = List("scala", "play", "akka", "spark", "47")
       val status = mock[Status]
       val actorRef = TestActorRef(
         new TwitterReceiverActorStreamStub[Status](twitterAuth, filters))
 
       actorRef ! status      
 
-      there was one(status).asInstanceOf[Status]
+      there was one(status)
     }
   }
 }

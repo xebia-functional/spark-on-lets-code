@@ -22,7 +22,7 @@ object ConfigRegistry {
   lazy val windowSizeSeconds = sparkOnConfig.getLong("windowSizeSeconds")
   lazy val slideDuration = sparkOnConfig.getLong("slideDuration")
   lazy val cassandraCQLPath = sparkOnConfig.getString("cassandraCQLPath")
-  lazy val sparkOnJars = sparkOnConfig.getStringList("spark.jars").asScala.toSeq
+  lazy val sparkOnJars = sparkOnConfig.getStringList("spark.jars").asScala.toList
   lazy val dateFormat = sparkOnConfig.getString("dateFormat")
   lazy val dateFormatSplitter = sparkOnConfig.getString("dateFormatSplitter")
 
@@ -46,7 +46,10 @@ object ConfigRegistry {
 
   lazy val sparkMasterHost = getStringFromEnvOrConfig("spark.master")
   lazy val sparkMasterPort = getStringFromEnvOrConfig("spark.port")
-  lazy val sparkMaster = s"spark://$sparkMasterHost:$sparkMasterPort"
+  lazy val sparkMaster = sparkMasterHost.contains("local") match {
+    case true => sparkMasterHost
+    case _ => "spark://$sparkMasterHost:$sparkMasterPort"
+  }
 
   lazy val sparkAppName = config.getString("spark.appName")
   lazy val sparkHome = config.getString("spark.home")
@@ -60,7 +63,7 @@ object ConfigRegistry {
 
   // Cassandra Configuration keys:
 
-  lazy val cassandraNodesValues: Seq[String] = Seq(sys.env.get(s"CASSANDRA_SEED_PORT_9160_TCP_ADDR")) ++ {
+  lazy val cassandraNodesValues: List[String] = List(sys.env.get(s"CASSANDRA_SEED_PORT_9160_TCP_ADDR")) ++ {
     1 to 10 map { index =>
       sys.env.get(s"CASSANDRA_SLAVE_${index}_PORT_9160_TCP_ADDR")
     }
@@ -86,9 +89,9 @@ object ConfigRegistry {
   lazy val kafkaNodesEnvVariables = 1 to 10 map { index =>
     (sys.env.get(s"KAFKA_${index}_PORT_9092_TCP_ADDR"),
         sys.env.get(s"KAFKA_${index}_PORT_9092_TCP_PORT"))
-  }
+  } toList
 
-  lazy val kafkaNodesValues: Seq[String] = kafkaNodesEnvVariables flatMap {
+  lazy val kafkaNodesValues: List[String] = kafkaNodesEnvVariables flatMap {
     case (Some(h), Some(p)) => Some(s"$h:$p")
     case _ => None
   }
@@ -116,7 +119,7 @@ object ConfigRegistry {
   private[config] def getIntFromEnvOrConfig(configKey: String) =
     sys.props.get(configKey) map (_.toInt) getOrElse config.getInt(configKey)
 
-  private[config] def mkStringNodes(nodes: Seq[String], propKey: String, cfg: Config, configurationKeyList: String): String =
+  private[config] def mkStringNodes(nodes: List[String], propKey: String, cfg: Config, configurationKeyList: String): String =
     if (nodes.nonEmpty) nodes.mkString(",")
     else sys.props.get(propKey) getOrElse {
       val hostList = cfg.getStringList(configurationKeyList).asScala
